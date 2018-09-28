@@ -6,15 +6,15 @@ import socket
 import fcntl
 import struct
 import re
-import platform
 import datetime
+import io
 
 class BarrierGate :
     def get_ip_address(self, ifname=''):
-        if platform.system() == "Linux" :
-            ifname = "enp3s0"
-        else :
+        if self.is_raspberry_pi() :
             ifname = "eth0"
+        else :
+            ifname = "enp3s0"
         s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
         ip_address = socket.inet_ntoa(fcntl.ioctl(
             s.fileno(),
@@ -66,3 +66,39 @@ class BarrierGate :
             else :
                 print("Invalid Code")
             print("\n")
+
+    def is_raspberry_pi(self, raise_on_errors = False):
+        try:
+            with io.open('/proc/cpuinfo', 'r') as cpuinfo:
+                found = False
+                for line in cpuinfo:
+                    if line.startswith('Hardware'):
+                        found = True
+                        label, value = line.strip().split(':', 1)
+                        value = value.strip()
+                        if value not in (
+                                'BCM2708',
+                                'BCM2709',
+                                'BCM2835',
+                                'BCM2836'
+                        ):
+                            if raise_on_errors:
+                                raise ValueError(
+                                    'This system does not appear to be a '
+                                    'Raspberry Pi.'
+                                )
+                            else:
+                                return False
+                if not found:
+                    if raise_on_errors:
+                        raise ValueError(
+                            'Unable to determine if this system is a Raspberry Pi.'
+                        )
+                    else:
+                        return False
+        except IOError:
+            if raise_on_errors:
+                raise ValueError('Unable to open `/proc/cpuinfo`.')
+            else:
+                return False
+        return True
