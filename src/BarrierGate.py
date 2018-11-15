@@ -1,4 +1,4 @@
-from src.config import *
+from src.config import ip_address_server, url, timeout_connection, retry_connect
 from time import sleep
 
 import requests
@@ -48,6 +48,7 @@ class BarrierGate :
             self.retry_connect()
         except requests.exceptions.Timeout as err_timeout :
             print(err_timeout)
+
             self.retry_connect()
         except requests.exceptions.HTTPError as err_http :
             print(err_http)
@@ -55,17 +56,6 @@ class BarrierGate :
 
     def get_current_datetime(self):
         return "[" + datetime.datetime.now().strftime("%a, %d %b %Y %H:%M:%S") + "]"
-
-    def main(self):
-        while 1 :
-            dt = self.get_current_datetime()
-            code = str(input(dt + " Scan Code : "))
-            input_code = re.sub(r"\W", "", code).replace("B", "")
-            if code != "" :
-                self.check_out(input_code)
-            else :
-                print("Invalid Code")
-            print("\n")
 
     def is_raspberry_pi(self, raise_on_errors = False):
         try:

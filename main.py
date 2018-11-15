@@ -1,5 +1,5 @@
-from src.BarrierGate import *
+from src.HID import *
 
 if __name__ == "__main__" :
-    barrier = BarrierGate()
-    barrier.main()
+    hid = HID()
+    hid.read_input()
