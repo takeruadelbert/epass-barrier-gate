@@ -5,4 +5,4 @@ timeout_connection = 30 # in second(s)
 retry_connect = 3 # in second(s)
 
 # HID Configuration
-hid_path = "/dev/input/event22" # look for RFID Device
+hid_name = "Sycreader RFID"

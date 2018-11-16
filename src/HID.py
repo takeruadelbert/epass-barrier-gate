@@ -1,15 +1,20 @@
-from src.config import hid_path
 from src.DataMapASCIICode import capscodes, scancodes
 from src.BarrierGate import *
+from InputDevice import *
 from evdev import InputDevice, categorize, ecodes
 
-class HID :
-    def __init__(self):
-        self.device = InputDevice(hid_path)
-        self.barrierGate = BarrierGate()
+
+class HID:
+    def __init__(self, hid_path):
+        if hid_path != "":
+            self.device = InputDevice(hid_path)
+            self.barrierGate = BarrierGate()
+        else:
+            self.err = True
+            self.err_message = "No RFID Device found."
 
     def read_input(self):
-        try :
+        try:
             code = ''
             caps = False
 
@@ -38,10 +43,10 @@ class HID :
                         if (data.scancode != 42) and (data.scancode != 28):
                             code += key_lookup
                         if data.scancode == 28:
-                            if code != "" :
-                                print(code) # print received scanned input to terminal
-                                self.barrierGate.check_out(code) # call the API function to server
-                            else :
+                            if code != "":
+                                print(code)  # print received scanned input to terminal
+                                self.barrierGate.check_out(code)  # call the API function to server
+                            else:
                                 print("Invalid Code")
                             code = ''
                             dt = self.barrierGate.get_current_datetime()
