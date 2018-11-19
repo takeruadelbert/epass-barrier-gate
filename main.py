@@ -6,7 +6,7 @@ if __name__ == "__main__" :
     # check if HID is readable
     input_device = InputDevice()
     device_path = input_device.get_rfid_reader_device()
-    if device_path != "":
+    if device_path != "" and device_path is not None:
         if access(device_path, R_OK) :
             hid = HID(device_path)
             hid.read_input()
@@ -14,5 +14,5 @@ if __name__ == "__main__" :
             err_message = "File '{}' isn't readable".format(device_path)
             print(err_message)
     else :
-        err_message = "No RFID Device found."
+        err_message = "No RFID Device found. Set Device Permission to readable."
         print(err_message)

@@ -53,3 +53,5 @@ class HID:
                             print("\n" + dt + " Scan Code : ", end='', flush=True)
         except KeyboardInterrupt:
             print("\nProgram is exit.")
+        except OSError:
+            print("\nDevice is disconnected.")
