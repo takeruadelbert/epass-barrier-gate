@@ -2,7 +2,8 @@ from pathlib import Path
 import subprocess
 
 # init variable
-service_path_temp = "/lib/systemd/system/epass/epass.service"
+temp_dir = "/lib/systemd/system/epass"
+service_path_temp = temp_dir + "/epass.service"
 service_path = "/lib/systemd/system/epass.service"
 
 def create_service():    
@@ -11,6 +12,8 @@ def create_service():
         print("Service 'epass.service' already exists in", "'" + service_path + "'.\nAborted.")
         print("===============================================================================\n")
     else:
+        if not check_dir_exist(temp_dir):
+            subprocess.call(["sudo", "mkdir", temp_dir])            
         f = open(service_path_temp, "w+")
         content = "[Unit]\nDescription=E-Pass Barrier Gate for Member\nAfter=multi-user.target\n\n[Service]\nType=simple\nExecStart=/usr/bin/python3 /home/pi/Documents/python/epass-barrier-gate/main.py\nRestart=on-abort\n\n[Install]\nWantedBy=multi-user.target"
         f.write(content)
@@ -25,6 +28,13 @@ def create_service():
 def check_file_exist():
     service_file = Path(service_path)
     if service_file.is_file():
+        return True
+    else:
+        return False
+    
+def check_dir_exist(path):
+    service_temp_dir = Path(path)
+    if service_temp_dir.exists():
         return True
     else:
         return False
